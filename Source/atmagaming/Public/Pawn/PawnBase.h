@@ -15,6 +15,8 @@ public:
 
 	APawnBase();
 
+	UStaticMeshComponent* GetMesh() const;
+
 protected:
 
 	virtual void BeginPlay() override;

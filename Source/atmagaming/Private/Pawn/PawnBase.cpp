@@ -14,6 +14,11 @@ APawnBase::APawnBase()
 
 }
 
+UStaticMeshComponent* APawnBase::GetMesh() const
+{
+	return MeshComponent;
+}
+
 void APawnBase::BeginPlay()
 {
 	Super::BeginPlay();
