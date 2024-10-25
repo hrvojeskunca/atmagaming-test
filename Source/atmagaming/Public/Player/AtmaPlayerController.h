@@ -29,5 +29,13 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* MoveAction;
 
+	UPROPERTY(VisibleAnywhere, Category = "Ïnput")
+	APawn* ControlledPawn;
+
+	float DefaultSpeed;
+	float Deceleration;
+	float MaxSpeed;
+
 	void Move(const FInputActionValue& InputActionValue);
+	void AutoMove();
 };
