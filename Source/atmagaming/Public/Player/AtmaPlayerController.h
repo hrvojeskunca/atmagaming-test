@@ -8,6 +8,7 @@
 
 class UInputMappingContext;
 class UInputAction;
+class APlayerPawn;
 struct FInputActionValue;
 
 UCLASS()
@@ -17,6 +18,8 @@ class ATMAGAMING_API AAtmaPlayerController : public APlayerController
 
 public:
 	AAtmaPlayerController();
+
+	virtual void Tick(float DeltaTime) override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -29,13 +32,17 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* MoveAction;
 
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* FireAction;
+
 	UPROPERTY(VisibleAnywhere, Category = "Ïnput")
-	APawn* ControlledPawn;
+	APlayerPawn* ControlledPawn;
 
 	float DefaultSpeed;
 	float Deceleration;
 	float MaxSpeed;
 
 	void Move(const FInputActionValue& InputActionValue);
+	void Fire();
 	void AutoMove();
 };

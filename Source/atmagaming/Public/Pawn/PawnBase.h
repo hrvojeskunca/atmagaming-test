@@ -6,6 +6,9 @@
 #include "GameFramework/Pawn.h"
 #include "PawnBase.generated.h"
 
+class USphereComponent;
+class UChildActorComponent;
+
 UCLASS(Abstract)
 class ATMAGAMING_API APawnBase : public APawn
 {
@@ -15,7 +18,10 @@ public:
 
 	APawnBase();
 
+	virtual void Tick(float DeltaTime) override;
+
 	UStaticMeshComponent* GetMesh() const;
+	UChildActorComponent* GetWeaponAttachmentPoint() const;
 
 protected:
 
@@ -23,5 +29,11 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Components")
 	UStaticMeshComponent* MeshComponent;
+
+	UPROPERTY(EditAnywhere, Category = "Weapon")
+	UChildActorComponent* WeaponAttachmentPoint;
+
+	UPROPERTY(VisibleDefaultsOnly, Category = "Components")
+	USphereComponent* CollisionComponent;
 
 };

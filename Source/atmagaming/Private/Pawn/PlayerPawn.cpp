@@ -9,8 +9,10 @@
 
 APlayerPawn::APlayerPawn()
 {
+	PrimaryActorTick.bCanEverTick = false;
+
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
-	SpringArm->SetupAttachment(GetMesh());
+	SpringArm->SetupAttachment(GetRootComponent());
 	SpringArm->TargetArmLength = 600.f;
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
@@ -46,4 +48,9 @@ APlayerPawn::APlayerPawn()
 void APlayerPawn::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void APlayerPawn::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
 }

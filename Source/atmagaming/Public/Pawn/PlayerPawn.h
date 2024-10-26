@@ -17,6 +17,7 @@ class ATMAGAMING_API APlayerPawn : public APawnBase
 	
 public:
 	APlayerPawn();
+	virtual void Tick(float DeltaTime) override;
 
 protected:
 	virtual void BeginPlay() override;

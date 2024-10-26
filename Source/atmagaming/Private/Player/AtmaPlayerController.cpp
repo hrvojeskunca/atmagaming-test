@@ -5,17 +5,19 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "GameData/AtmaPlayerPawnData.h"
+#include "Pawn/PlayerPawn.h"
 
 AAtmaPlayerController::AAtmaPlayerController()
 {
-	
+	PrimaryActorTick.bCanEverTick = true;
 }
 
 void AAtmaPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	ControlledPawn = GetPawn<APawn>();
+	ControlledPawn = GetPawn<APlayerPawn>();
+	check(ControlledPawn);
 
 	check(AtmaContext);
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
@@ -39,6 +41,28 @@ void AAtmaPlayerController::BeginPlay()
 
 }
 
+void AAtmaPlayerController::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	FVector MouseWorldLocation;
+	FVector MouseWorldDirection;
+
+	if (DeprojectMousePositionToWorld(MouseWorldLocation, MouseWorldDirection))
+	{
+		FVector PawnLocation = ControlledPawn->GetActorLocation();
+		FVector PawnLocationYZ = FVector(0.f, PawnLocation.Y, PawnLocation.Z);
+		FVector MouseLocationYZ = FVector(0.f, MouseWorldLocation.Y, MouseWorldLocation.Z);
+
+		FVector DirectionToMouse = (MouseLocationYZ - PawnLocationYZ).GetSafeNormal();
+
+		float TargetYaw = FMath::RadiansToDegrees(FMath::Atan2(DirectionToMouse.Y, DirectionToMouse.Z));
+
+		FRotator TargetRotation = FRotator(0.0f, 0.f, TargetYaw);
+		ControlledPawn->SetActorRotation(TargetRotation);
+	}
+}
+
 void AAtmaPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
@@ -47,6 +71,7 @@ void AAtmaPlayerController::SetupInputComponent()
 
 	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAtmaPlayerController::Move);
 	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::None, this, &AAtmaPlayerController::AutoMove);
+	EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &AAtmaPlayerController::Fire);
 
 }
 
@@ -85,6 +110,11 @@ void AAtmaPlayerController::Move(const FInputActionValue& InputActionValue)
 		
 		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector.X);
 	}
+}
+
+void AAtmaPlayerController::Fire()
+{
+	
 }
 
 void AAtmaPlayerController::AutoMove()
