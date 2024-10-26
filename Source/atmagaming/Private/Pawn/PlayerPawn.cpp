@@ -11,14 +11,14 @@ APlayerPawn::APlayerPawn()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+	SpringArm = CreateDefaultSubobject<USpringArmComponent>("SpringArm");
 	SpringArm->SetupAttachment(GetRootComponent());
 	SpringArm->TargetArmLength = 600.f;
 
-	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
 	Camera->SetupAttachment(SpringArm);
 
-	FloatingPawnMovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("FloatingPawnMovement"));
+	FloatingPawnMovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>("FloatingPawnMovement");
 
 	if (FloatingPawnMovementComponent)
 	{

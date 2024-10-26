@@ -26,17 +26,17 @@ protected:
 	virtual void SetupInputComponent() override;
 
 private:
-	UPROPERTY(EditAnywhere, Category = "Input")
-	UInputMappingContext* AtmaContext;
+	UPROPERTY(EditAnywhere, Category = Input)
+	TObjectPtr<UInputMappingContext> AtmaContext;
 	
-	UPROPERTY(EditAnywhere, Category = "Input")
-	UInputAction* MoveAction;
+	UPROPERTY(EditAnywhere, Category = Input)
+	TObjectPtr<UInputAction> MoveAction;
 
-	UPROPERTY(EditAnywhere, Category = "Input")
-	UInputAction* FireAction;
+	UPROPERTY(EditAnywhere, Category = Input)
+	TObjectPtr<UInputAction> FireAction;
 
-	UPROPERTY(VisibleAnywhere, Category = "Ïnput")
-	APlayerPawn* ControlledPawn;
+	UPROPERTY(VisibleAnywhere, Category = Input)
+	TObjectPtr<APlayerPawn> ControlledPawn;
 
 	float DefaultSpeed;
 	float Deceleration;

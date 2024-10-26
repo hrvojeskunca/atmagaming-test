@@ -8,7 +8,7 @@ AAtmaWeaponBase::AAtmaWeaponBase()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
+	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("MeshComponent");
     MeshComponent->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	RootComponent = MeshComponent;
 
@@ -17,8 +17,6 @@ AAtmaWeaponBase::AAtmaWeaponBase()
 void AAtmaWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
-
-    OwnerPawn = GetParentComponent()->GetOwner();
 	
 }
 

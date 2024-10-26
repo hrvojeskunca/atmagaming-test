@@ -27,13 +27,13 @@ protected:
 
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, Category = "Components")
-	UStaticMeshComponent* MeshComponent;
+	UPROPERTY(EditAnywhere, Category = Components)
+	TObjectPtr<UStaticMeshComponent> MeshComponent;
 
-	UPROPERTY(EditAnywhere, Category = "Weapon")
-	UChildActorComponent* WeaponAttachmentPoint;
+	UPROPERTY(EditAnywhere, Category = Weapon)
+	TObjectPtr<UChildActorComponent> WeaponAttachmentPoint;
 
-	UPROPERTY(VisibleDefaultsOnly, Category = "Components")
-	USphereComponent* CollisionComponent;
+	UPROPERTY(VisibleDefaultsOnly, Category = Components)
+	TObjectPtr<USphereComponent> CollisionComponent;
 
 };

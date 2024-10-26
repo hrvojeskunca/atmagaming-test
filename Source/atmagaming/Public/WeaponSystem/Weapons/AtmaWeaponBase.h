@@ -19,10 +19,6 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, Category = "Components")
-	UStaticMeshComponent* MeshComponent;
-
-private:
-	AActor* OwnerPawn;
-
+	UPROPERTY(EditAnywhere, Category = Components)
+	TObjectPtr<UStaticMeshComponent> MeshComponent;
 };

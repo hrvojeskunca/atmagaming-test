@@ -11,14 +11,14 @@ APawnBase::APawnBase()
 
 	PrimaryActorTick.bCanEverTick = false;
 
-	CollisionComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
+	CollisionComponent = CreateDefaultSubobject<USphereComponent>("SphereComponent");
 	CollisionComponent->InitSphereRadius(50.0f);
 	RootComponent = CollisionComponent;
 
-	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
+	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("MeshComponent");
 	MeshComponent->SetupAttachment(RootComponent);
 
-	WeaponAttachmentPoint = CreateDefaultSubobject<UChildActorComponent>(TEXT("WeaponAttachmentPoint"));
+	WeaponAttachmentPoint = CreateDefaultSubobject<UChildActorComponent>("WeaponAttachmentPoint");
 	WeaponAttachmentPoint->SetupAttachment(MeshComponent);
 
 }
