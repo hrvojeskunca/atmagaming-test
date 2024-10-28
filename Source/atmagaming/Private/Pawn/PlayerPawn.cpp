@@ -5,22 +5,24 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
-#include "GameData/AtmaPlayerPawnData.h"
+#include "GameData/Maps/AtmaPlayerDataMap.h"
 
 APlayerPawn::APlayerPawn()
 {
-	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
-	SpringArm->SetupAttachment(GetMesh());
+	PrimaryActorTick.bCanEverTick = false;
+
+	SpringArm = CreateDefaultSubobject<USpringArmComponent>("SpringArm");
+	SpringArm->SetupAttachment(GetRootComponent());
 	SpringArm->TargetArmLength = 600.f;
 
-	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
 	Camera->SetupAttachment(SpringArm);
 
-	FloatingPawnMovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("FloatingPawnMovement"));
+	FloatingPawnMovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>("FloatingPawnMovement");
 
 	if (FloatingPawnMovementComponent)
 	{
-		FAtmaPlayerPawnData PlayerData;
+		FAtmaPlayerDataMap PlayerData;
 		TArray<FName> RequiredKeys = { FName("MaxSpeed"), FName("Acceleration"), FName("Deceleration") };
 		bool bAllKeysExist = true;
 
@@ -40,10 +42,14 @@ APlayerPawn::APlayerPawn()
 			FloatingPawnMovementComponent->Deceleration = PlayerData.PlayerValues[FName("Deceleration")];
 		}
 	}
-	
 }
 
 void APlayerPawn::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void APlayerPawn::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
 }

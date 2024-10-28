@@ -17,17 +17,18 @@ class ATMAGAMING_API APlayerPawn : public APawnBase
 	
 public:
 	APlayerPawn();
+	virtual void Tick(float DeltaTime) override;
 
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, Category = "Components")
-	USpringArmComponent* SpringArm;
+	UPROPERTY(EditAnywhere, Category = Components)
+	TObjectPtr<USpringArmComponent> SpringArm;
 
-	UPROPERTY(EditAnywhere, Category = "Components")
-	UCameraComponent* Camera;
+	UPROPERTY(EditAnywhere, Category = Components)
+	TObjectPtr<UCameraComponent> Camera;
 
-	UPROPERTY(EditAnywhere, Category = "Components")
-	UFloatingPawnMovement* FloatingPawnMovementComponent;
+	UPROPERTY(EditAnywhere, Category = Components)
+	TObjectPtr<UFloatingPawnMovement> FloatingPawnMovementComponent;
 	
 };
