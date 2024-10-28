@@ -43,8 +43,6 @@ private:
 	float MaxSpeed;
 
 	void HandleMove(const FInputActionValue& InputActionValue);
-	
 	void HandleFire(const FInputActionValue& InputActionValue);
-	
 	void HandleAutoMove();
 };

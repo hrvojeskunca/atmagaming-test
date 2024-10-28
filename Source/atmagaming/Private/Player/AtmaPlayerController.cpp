@@ -55,7 +55,6 @@ void AAtmaPlayerController::BeginPlay()
 	}
 
 	HandleAutoMove();
-
 }
 
 void AAtmaPlayerController::Tick(float DeltaTime)
@@ -136,7 +135,7 @@ void AAtmaPlayerController::HandleFire(const FInputActionValue& InputActionValue
 	if (Weapon->GetClass()->ImplementsInterface(UCombatActions::StaticClass()))
 	{
 		ICombatActions* CombatActions = CastChecked<ICombatActions>(Weapon);
-		
+
 		CombatActions->Fire();
 	}
 }

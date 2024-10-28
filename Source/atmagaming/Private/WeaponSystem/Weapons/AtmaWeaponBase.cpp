@@ -6,6 +6,7 @@
 #include "Components/SceneComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
+#include "GameData/Structs/AtmaWeaponData.h"
 
 
 AAtmaWeaponBase::AAtmaWeaponBase()
@@ -25,42 +26,76 @@ AAtmaWeaponBase::AAtmaWeaponBase()
 		BulletSpawnPoint->SetupAttachment(MeshComponent);
 	}
 
-	CurrentWeaponName = "AtmaWeaponBase";
-
+	EquippedWeaponName = "AtmaWeaponBase";
 }
 
 void AAtmaWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	/*
-	UDataTable* WeaponDataTable = LoadObject<UDataTable>(nullptr, TEXT("/Data/DataTables/AtmaWeaponTable"));
-	if (WeaponDataTable)
-	{
-		static const FString ContextString(TEXT("WeaponDataContext"));
-		FAtmaWeaponData* WeaponData = WeaponDataTable->FindRow<FAtmaWeaponData>(CurrentWeaponName, ContextString);
-
-		if (WeaponData)
-		{
-			
-		}
-	}
-	*/
-	
+	SetWeaponData(EquippedWeaponName);
 }
 
 void AAtmaWeaponBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void AAtmaWeaponBase::Fire()
+{	
+	switch (WeaponType)
+	{
+	case EWeaponType::Projectile:
+		HandleFireProjectile();
+		break;
+
+	case EWeaponType::Hitscan:
+		UE_LOG(LogTemp, Warning, TEXT("Pew! Pew! Railgun hit!"));
+		break;
+
+	default:
+		UE_LOG(LogTemp, Warning, TEXT("Weapon Data missing! Check WeaponData data table!"));
+		break;
+	}
+}
+
+void AAtmaWeaponBase::SetWeaponData(FName WeaponName)
 {
-	float CustomMaxSpeed = 2000.0f;
-	float CustomInitialSpeed = 1200.0f;
-	float CustomDamage = 25.0f;
-	
+	UDataTable* WeaponDataTable = LoadObject<UDataTable>(nullptr, TEXT("/Game/Data/DataTables/WeaponData"));
+	if (WeaponDataTable)
+	{
+		static const FString ContextString(TEXT("WeaponDataContext"));
+		FAtmaWeaponData* WeaponData = WeaponDataTable->FindRow<FAtmaWeaponData>(WeaponName, ContextString);
+
+		if (WeaponData)
+		{
+			WeaponType = WeaponData->WeaponType;
+			WeaponDamage = WeaponData->WeaponDamage;
+			WeaponCooldown = WeaponData->WeaponCooldown;
+			BulletMaxSpeed = WeaponData->BulletMaxSpeed;
+			BulletInitialSpeed = WeaponData->BulletInitialSpeed;
+		}
+	}
+}
+
+void AAtmaWeaponBase::HandleFireProjectile()
+{
+	switch (FireState)
+	{
+	case EWeaponFireState::Ready:
+		FireProjectile();
+		FireState = EWeaponFireState::Cooldown;
+		GetWorld()->GetTimerManager().SetTimer(BaseWeaponCooldownTimerHandle, this, &AAtmaWeaponBase::ResetFireCooldown, WeaponCooldown, false);
+		break;
+	case EWeaponFireState::Cooldown:
+		break;
+	default:
+		break;
+	}
+}
+
+void AAtmaWeaponBase::FireProjectile()
+{
 	FVector ActorVelocity = GetParentActor()->GetVelocity();
 
 	check(BulletClass);
@@ -75,11 +110,16 @@ void AAtmaWeaponBase::Fire()
 
 	if (Bullet)
 	{
-		Bullet->InitialSpeed = CustomInitialSpeed;
-		Bullet->MaxSpeed = CustomMaxSpeed;
-		Bullet->Damage = CustomDamage;
+		Bullet->InitialSpeed = BulletInitialSpeed;
+		Bullet->MaxSpeed = BulletMaxSpeed;
+		Bullet->Damage = WeaponDamage;
 		Bullet->CallingActorVelocity = ActorVelocity;
 		Bullet->FireInDirection(FireDirection);
 	}
+}
+
+void AAtmaWeaponBase::ResetFireCooldown()
+{
+	FireState = EWeaponFireState::Ready;
 }
 
