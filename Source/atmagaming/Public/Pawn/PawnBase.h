@@ -21,7 +21,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UStaticMeshComponent* GetMesh() const;
-	UChildActorComponent* GetWeaponAttachmentPoint() const;
+	UChildActorComponent* GetWeaponAttachmentComponent() const;
 
 protected:
 
@@ -31,7 +31,7 @@ protected:
 	TObjectPtr<UStaticMeshComponent> MeshComponent;
 
 	UPROPERTY(EditAnywhere, Category = Weapon)
-	TObjectPtr<UChildActorComponent> WeaponAttachmentPoint;
+	TObjectPtr<UChildActorComponent> WeaponAttachmentComponent;
 
 	UPROPERTY(VisibleDefaultsOnly, Category = Components)
 	TObjectPtr<USphereComponent> CollisionComponent;

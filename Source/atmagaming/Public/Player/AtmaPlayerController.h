@@ -42,7 +42,9 @@ private:
 	float Deceleration;
 	float MaxSpeed;
 
-	void Move(const FInputActionValue& InputActionValue);
-	void Fire();
-	void AutoMove();
+	void HandleMove(const FInputActionValue& InputActionValue);
+	
+	void HandleFire(const FInputActionValue& InputActionValue);
+	
+	void HandleAutoMove();
 };

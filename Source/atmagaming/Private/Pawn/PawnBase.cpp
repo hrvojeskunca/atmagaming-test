@@ -18,8 +18,8 @@ APawnBase::APawnBase()
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("MeshComponent");
 	MeshComponent->SetupAttachment(RootComponent);
 
-	WeaponAttachmentPoint = CreateDefaultSubobject<UChildActorComponent>("WeaponAttachmentPoint");
-	WeaponAttachmentPoint->SetupAttachment(MeshComponent);
+	WeaponAttachmentComponent = CreateDefaultSubobject<UChildActorComponent>("WeaponAttachmentComponent");
+	WeaponAttachmentComponent->SetupAttachment(MeshComponent);
 
 }
 
@@ -39,7 +39,7 @@ UStaticMeshComponent* APawnBase::GetMesh() const
 	return MeshComponent;
 }
 
-UChildActorComponent* APawnBase::GetWeaponAttachmentPoint() const
+UChildActorComponent* APawnBase::GetWeaponAttachmentComponent() const
 {
-	return WeaponAttachmentPoint;
+	return WeaponAttachmentComponent;
 }

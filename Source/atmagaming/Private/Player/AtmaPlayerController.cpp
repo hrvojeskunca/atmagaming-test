@@ -6,6 +6,8 @@
 #include "EnhancedInputComponent.h"
 #include "GameData/AtmaPlayerPawnData.h"
 #include "Pawn/PlayerPawn.h"
+#include "Interfaces/CombatActions.h"
+#include "WeaponSystem/Weapons/AtmaWeaponBase.h"
 
 AAtmaPlayerController::AAtmaPlayerController()
 {
@@ -37,7 +39,7 @@ void AAtmaPlayerController::BeginPlay()
 	Deceleration = PlayerData.PlayerValues[FName("Deceleration")];
 	MaxSpeed = PlayerData.PlayerValues[FName("MaxSpeed")];
 
-	AutoMove();
+	HandleAutoMove();
 
 }
 
@@ -45,22 +47,21 @@ void AAtmaPlayerController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	FVector MouseWorldLocation;
-	FVector MouseWorldDirection;
+	FVector MouseToWorldLocation;
+	FVector MouseToWorldDirection;
 
-	if (DeprojectMousePositionToWorld(MouseWorldLocation, MouseWorldDirection))
+	if (DeprojectMousePositionToWorld(MouseToWorldLocation, MouseToWorldDirection))
 	{
 		FVector PawnLocation = ControlledPawn->GetActorLocation();
-		FVector PawnLocationYZ = FVector(0.f, PawnLocation.Y, PawnLocation.Z);
-		FVector MouseLocationYZ = FVector(0.f, MouseWorldLocation.Y, MouseWorldLocation.Z);
 
-		FVector DirectionToMouse = (MouseLocationYZ - PawnLocationYZ).GetSafeNormal();
+		FVector DirectionToMouseYZ = FVector(0.f, MouseToWorldLocation.Y - PawnLocation.Y, MouseToWorldLocation.Z - PawnLocation.Z).GetSafeNormal();
 
-		float TargetYaw = FMath::RadiansToDegrees(FMath::Atan2(DirectionToMouse.Y, DirectionToMouse.Z));
+		float TargetYaw = FMath::RadiansToDegrees(FMath::Atan2(DirectionToMouseYZ.Y, DirectionToMouseYZ.Z));
 
-		FRotator TargetRotation = FRotator(0.0f, 0.f, TargetYaw);
+		FRotator TargetRotation = FRotator(0.f, 0.f, TargetYaw);
 		ControlledPawn->SetActorRotation(TargetRotation);
 	}
+
 }
 
 void AAtmaPlayerController::SetupInputComponent()
@@ -69,13 +70,13 @@ void AAtmaPlayerController::SetupInputComponent()
 
 	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
 
-	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAtmaPlayerController::Move);
-	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::None, this, &AAtmaPlayerController::AutoMove);
-	EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &AAtmaPlayerController::Fire);
+	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAtmaPlayerController::HandleMove);
+	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::None, this, &AAtmaPlayerController::HandleAutoMove);
+	EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &AAtmaPlayerController::HandleFire);
 
 }
 
-void AAtmaPlayerController::Move(const FInputActionValue& InputActionValue)
+void AAtmaPlayerController::HandleMove(const FInputActionValue& InputActionValue)
 {
 	const FVector2D InputAxisVector = InputActionValue.Get<FVector2D>();
 	const FRotator Rotation = GetControlRotation();
@@ -112,12 +113,20 @@ void AAtmaPlayerController::Move(const FInputActionValue& InputActionValue)
 	}
 }
 
-void AAtmaPlayerController::Fire()
+void AAtmaPlayerController::HandleFire(const FInputActionValue& InputActionValue)
 {
-	
+	AActor* WeaponActor = ControlledPawn->GetWeaponAttachmentComponent()->GetChildActor();
+	AAtmaWeaponBase* Weapon = CastChecked<AAtmaWeaponBase>(WeaponActor);
+
+	if (Weapon->GetClass()->ImplementsInterface(UCombatActions::StaticClass()))
+	{
+		ICombatActions* CombatActions = CastChecked<ICombatActions>(Weapon);
+		
+		CombatActions->Fire();
+	}
 }
 
-void AAtmaPlayerController::AutoMove()
+void AAtmaPlayerController::HandleAutoMove()
 {	
 	const FRotator Rotation = GetControlRotation();
 	const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);

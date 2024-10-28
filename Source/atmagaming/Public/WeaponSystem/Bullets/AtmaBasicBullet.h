@@ -18,7 +18,21 @@ class ATMAGAMING_API AAtmaBasicBullet : public AActor
 public:	
 	AAtmaBasicBullet();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = BulletProperties)
+	float MaxSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = BulletProperties)
+	float InitialSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = BulletProperties)
+	float Damage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = BulletProperties)
+	FVector CallingActorVelocity;
+
 	virtual void Tick(float DeltaTime) override;
+
+	void FireInDirection(const FVector& ShootDirection);
 
 protected:
 	virtual void BeginPlay() override;
@@ -31,4 +45,5 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = Components)
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovementComponent;
+
 };
