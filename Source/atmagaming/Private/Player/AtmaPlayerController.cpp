@@ -4,7 +4,7 @@
 #include "Player/AtmaPlayerController.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
-#include "GameData/AtmaPlayerPawnData.h"
+#include "GameData/Maps/AtmaPlayerDataMap.h"
 #include "Pawn/PlayerPawn.h"
 #include "Interfaces/CombatActions.h"
 #include "WeaponSystem/Weapons/AtmaWeaponBase.h"
@@ -34,10 +34,25 @@ void AAtmaPlayerController::BeginPlay()
 	InputModeData.SetHideCursorDuringCapture(false);
 	SetInputMode(InputModeData);
 
-	FAtmaPlayerPawnData PlayerData;
-	DefaultSpeed = PlayerData.PlayerValues[FName("DefaultSpeed")];
-	Deceleration = PlayerData.PlayerValues[FName("Deceleration")];
-	MaxSpeed = PlayerData.PlayerValues[FName("MaxSpeed")];
+	FAtmaPlayerDataMap PlayerData;
+	TArray<FName> RequiredKeys = { FName("MaxSpeed"), FName("Acceleration"), FName("Deceleration") };
+	bool bAllKeysExist = true;
+
+	for (const FName& Key : RequiredKeys)
+	{
+		if (!PlayerData.PlayerValues.Contains(Key))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("%s is missing in PlayerValues!"), *Key.ToString());
+			bAllKeysExist = false;
+		}
+	}
+
+	if (bAllKeysExist)
+	{
+		DefaultSpeed = PlayerData.PlayerValues[FName("DefaultSpeed")];
+		Deceleration = PlayerData.PlayerValues[FName("Deceleration")];
+		MaxSpeed = PlayerData.PlayerValues[FName("MaxSpeed")];
+	}
 
 	HandleAutoMove();
 

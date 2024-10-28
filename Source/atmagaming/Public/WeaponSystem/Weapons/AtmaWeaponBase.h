@@ -17,6 +17,9 @@ class ATMAGAMING_API AAtmaWeaponBase : public AActor, public ICombatActions
 public:	
 	AAtmaWeaponBase();
 
+	UPROPERTY(VisibleAnywhere, Category = "WeaponData")
+    FName CurrentWeaponName;
+
 	virtual void Tick(float DeltaTime) override;
 	virtual void Fire() override;
 

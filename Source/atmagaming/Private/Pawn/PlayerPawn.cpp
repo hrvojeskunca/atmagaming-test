@@ -5,7 +5,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
-#include "GameData/AtmaPlayerPawnData.h"
+#include "GameData/Maps/AtmaPlayerDataMap.h"
 
 APlayerPawn::APlayerPawn()
 {
@@ -22,7 +22,7 @@ APlayerPawn::APlayerPawn()
 
 	if (FloatingPawnMovementComponent)
 	{
-		FAtmaPlayerPawnData PlayerData;
+		FAtmaPlayerDataMap PlayerData;
 		TArray<FName> RequiredKeys = { FName("MaxSpeed"), FName("Acceleration"), FName("Deceleration") };
 		bool bAllKeysExist = true;
 
@@ -42,7 +42,6 @@ APlayerPawn::APlayerPawn()
 			FloatingPawnMovementComponent->Deceleration = PlayerData.PlayerValues[FName("Deceleration")];
 		}
 	}
-	
 }
 
 void APlayerPawn::BeginPlay()

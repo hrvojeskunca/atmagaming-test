@@ -25,11 +25,27 @@ AAtmaWeaponBase::AAtmaWeaponBase()
 		BulletSpawnPoint->SetupAttachment(MeshComponent);
 	}
 
+	CurrentWeaponName = "AtmaWeaponBase";
+
 }
 
 void AAtmaWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	/*
+	UDataTable* WeaponDataTable = LoadObject<UDataTable>(nullptr, TEXT("/Data/DataTables/AtmaWeaponTable"));
+	if (WeaponDataTable)
+	{
+		static const FString ContextString(TEXT("WeaponDataContext"));
+		FAtmaWeaponData* WeaponData = WeaponDataTable->FindRow<FAtmaWeaponData>(CurrentWeaponName, ContextString);
+
+		if (WeaponData)
+		{
+			
+		}
+	}
+	*/
 	
 }
 
