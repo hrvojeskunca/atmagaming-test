@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "Interfaces/CombatStatus.h"
 #include "PawnBase.generated.h"
 
 class USphereComponent;
 class UChildActorComponent;
 
 UCLASS(Abstract)
-class ATMAGAMING_API APawnBase : public APawn
+class ATMAGAMING_API APawnBase : public APawn, public ICombatStatus
 {
 	GENERATED_BODY()
 
@@ -22,6 +23,8 @@ public:
 
 	UStaticMeshComponent* GetMesh() const;
 	UChildActorComponent* GetWeaponAttachmentComponent() const;
+	
+	virtual void ApplyDamage(AActor* DamageActor, float DamageAmount, TSubclassOf<UDamageType> DamageType, class AController* InstigatedBy, AActor* DamageCauser) override;
 
 protected:
 
@@ -35,5 +38,8 @@ protected:
 
 	UPROPERTY(VisibleDefaultsOnly, Category = Components)
 	TObjectPtr<USphereComponent> CollisionComponent;
+
+	UPROPERTY(EditAnywhere, Category = Components)
+	TObjectPtr<UActorComponent> HealthComponent;
 
 };

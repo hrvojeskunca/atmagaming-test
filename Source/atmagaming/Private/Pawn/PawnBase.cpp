@@ -4,6 +4,8 @@
 #include "Pawn/PawnBase.h"
 #include "WeaponSystem/Weapons/AtmaWeaponBase.h"
 #include "Components/SphereComponent.h"
+#include "Interfaces/HealthStatus.h"
+#include "Components/Health/AtmaHealthComponent.h"
 
 
 APawnBase::APawnBase()
@@ -20,6 +22,12 @@ APawnBase::APawnBase()
 
 	WeaponAttachmentComponent = CreateDefaultSubobject<UChildActorComponent>("WeaponAttachmentComponent");
 	WeaponAttachmentComponent->SetupAttachment(MeshComponent);
+
+	if (!HealthComponent)
+	{
+		HealthComponent = CreateDefaultSubobject<UActorComponent>("HealthComponent");
+
+	}
 
 }
 
@@ -42,4 +50,14 @@ UStaticMeshComponent* APawnBase::GetMesh() const
 UChildActorComponent* APawnBase::GetWeaponAttachmentComponent() const
 {
 	return WeaponAttachmentComponent;
+}
+
+void APawnBase::ApplyDamage(AActor* DamageActor, float DamageAmount, TSubclassOf<UDamageType> DamageType, AController* InstigatedBy, AActor* DamageCauser)
+{
+	if (HealthComponent->GetClass()->ImplementsInterface(UHealthStatus::StaticClass()))
+	{
+		IHealthStatus* HealthStatusInterface = CastChecked<IHealthStatus>(HealthComponent);
+
+		HealthStatusInterface->TakeDamage(DamageAmount, DamageType);
+	}
 }
