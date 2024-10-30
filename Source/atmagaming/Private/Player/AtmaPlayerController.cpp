@@ -8,6 +8,7 @@
 #include "Pawn/PlayerPawn.h"
 #include "Interfaces/CombatActions.h"
 #include "WeaponSystem/Weapons/AtmaWeaponBase.h"
+#include "GameFramework/FloatingPawnMovement.h"
 
 AAtmaPlayerController::AAtmaPlayerController()
 {
@@ -18,7 +19,7 @@ void AAtmaPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	ControlledPawn = GetPawn<APlayerPawn>();
+	ControlledPawn = Cast<APlayerPawn>(GetPawn());
 	check(ControlledPawn);
 
 	check(AtmaContext);
@@ -34,25 +35,7 @@ void AAtmaPlayerController::BeginPlay()
 	InputModeData.SetHideCursorDuringCapture(false);
 	SetInputMode(InputModeData);
 
-	FAtmaPlayerDataMap PlayerData;
-	TArray<FName> RequiredKeys = { FName("MaxSpeed"), FName("Acceleration"), FName("Deceleration") };
-	bool bAllKeysExist = true;
-
-	for (const FName& Key : RequiredKeys)
-	{
-		if (!PlayerData.PlayerValues.Contains(Key))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("%s is missing in PlayerValues!"), *Key.ToString());
-			bAllKeysExist = false;
-		}
-	}
-
-	if (bAllKeysExist)
-	{
-		DefaultSpeed = PlayerData.PlayerValues[FName("DefaultSpeed")];
-		Deceleration = PlayerData.PlayerValues[FName("Deceleration")];
-		MaxSpeed = PlayerData.PlayerValues[FName("MaxSpeed")];
-	}
+	NewDefaultSpeed = ControlledPawn->GetPawnDefaultSpeed();
 
 	HandleAutoMove();
 }
@@ -93,38 +76,25 @@ void AAtmaPlayerController::SetupInputComponent()
 void AAtmaPlayerController::HandleMove(const FInputActionValue& InputActionValue)
 {
 	const FVector2D InputAxisVector = InputActionValue.Get<FVector2D>();
-	const FRotator Rotation = GetControlRotation();
-	const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
 
-	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Z);
+	float VerticalInput = FMath::Max(InputAxisVector.Y, 0.0f);
+	float MovementSpeed;
 
-	if (ControlledPawn)
+	if (InputAxisVector.X !=0)
 	{
-		if (InputAxisVector.Y > 0)
-		{
-			ControlledPawn->AddMovementInput(ForwardDirection, InputAxisVector.Y);
-		} 
-		else if (InputAxisVector.Y < 0)
-		{
-			float CurrentSpeed = ControlledPawn->GetVelocity().Size();
-			CurrentSpeed = FMath::Max(CurrentSpeed - Deceleration * GetWorld()->GetDeltaSeconds(), 0.f);
-
-			if (CurrentSpeed > 0)
-			{
-				ControlledPawn->AddMovementInput(ForwardDirection, CurrentSpeed / MaxSpeed);
-			}
-			else
-			{
-				ControlledPawn->AddMovementInput(ForwardDirection, 0.f);
-			}
-		}
-		else {
-			ControlledPawn->AddMovementInput(ForwardDirection, DefaultSpeed);
-		}
-		
-		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector.X);
+		MovementSpeed = FMath::Abs(InputAxisVector.X);
 	}
+
+	if (VerticalInput != 0)
+	{
+		MovementSpeed = VerticalInput;
+	}
+
+	const FVector MovementDirection = FVector(0.f, InputAxisVector.X, VerticalInput);
+	
+	float CMSpeed = ControlledPawn->GetMovementComponent()->GetMaxSpeed();
+	
+	ControlledPawn->AddMovementInput(MovementDirection, MovementSpeed);
 }
 
 void AAtmaPlayerController::HandleFire(const FInputActionValue& InputActionValue)
@@ -149,6 +119,6 @@ void AAtmaPlayerController::HandleAutoMove()
 	
 	if (ControlledPawn)
 	{
-		ControlledPawn->AddMovementInput(ForwardDirection, DefaultSpeed);
+		ControlledPawn->AddMovementInput(ForwardDirection, NewDefaultSpeed);
 	}
 }

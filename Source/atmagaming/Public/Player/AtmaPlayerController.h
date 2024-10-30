@@ -25,6 +25,9 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 
+	UPROPERTY(VisibleAnywhere, Category = Movement)
+	float NewDefaultSpeed;
+
 private:
 	UPROPERTY(EditAnywhere, Category = Input)
 	TObjectPtr<UInputMappingContext> AtmaContext;
@@ -37,10 +40,6 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = Input)
 	TObjectPtr<APlayerPawn> ControlledPawn;
-
-	float DefaultSpeed;
-	float Deceleration;
-	float MaxSpeed;
 
 	void HandleMove(const FInputActionValue& InputActionValue);
 	void HandleFire(const FInputActionValue& InputActionValue);
