@@ -18,10 +18,15 @@ public:
 	APlayerPawn();
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void PossessedBy(AController* NewController) override;
+
+	virtual void SetPawnData(EAtmaPawnType NewPawnType) override;
+
 protected:
 	virtual void BeginPlay() override;
 
-	virtual void SetPawnData(EAtmaPawnType NewPawnType) override;
+	UPROPERTY(EditAnywhere, Category = PawnData)
+	EAtmaPawnType PawnType;
 
 	UPROPERTY(EditAnywhere, Category = Components)
 	TObjectPtr<USpringArmComponent> SpringArm;

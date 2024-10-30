@@ -26,16 +26,20 @@ APlayerPawn::APlayerPawn()
 void APlayerPawn::BeginPlay()
 {
 	Super::BeginPlay();
-
-	SetPawnData(PawnType);
 }
 
-void APlayerPawn::SetPawnData(EAtmaPawnType NewPawnType)
-{
-	Super::SetPawnData(NewPawnType);
+void APlayerPawn::PossessedBy(AController* NewController) {
+	Super::PossessedBy(NewController);
+
+	SetPawnData(PawnType);
 }
 
 void APlayerPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void APlayerPawn::SetPawnData(EAtmaPawnType NewPawnType)
+{
+	Super::SetPawnData(NewPawnType);
 }

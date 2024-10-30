@@ -41,10 +41,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(VisibleAnywhere, Category = PawnData)
-	float DefaultPawnSpeed = 0.f;
-
-	UPROPERTY(EditAnywhere, Category = PawnData)
-	EAtmaPawnType PawnType = EAtmaPawnType::Default;
+	float DefaultPawnSpeed;
 
 	UPROPERTY(EditAnywhere, Category = Components)
 	TObjectPtr<UStaticMeshComponent> MeshComponent;

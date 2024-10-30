@@ -26,7 +26,7 @@ protected:
 	virtual void SetupInputComponent() override;
 
 	UPROPERTY(VisibleAnywhere, Category = Movement)
-	float DefaultSpeed;
+	float NewDefaultSpeed;
 
 private:
 	UPROPERTY(EditAnywhere, Category = Input)

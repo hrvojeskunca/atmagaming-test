@@ -54,9 +54,6 @@ APawnBase::APawnBase()
 		WidgetComponent->SetupAttachment(MeshComponent);
 		WidgetComponent->SetWidgetSpace(EWidgetSpace::World);
 	}
-
-	SetPawnData(PawnType);
-
 }
 
 void APawnBase::BeginPlay()

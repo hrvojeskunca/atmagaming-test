@@ -19,7 +19,7 @@ void AAtmaPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	ControlledPawn = GetPawn<APlayerPawn>();
+	ControlledPawn = Cast<APlayerPawn>(GetPawn());
 	check(ControlledPawn);
 
 	check(AtmaContext);
@@ -35,7 +35,7 @@ void AAtmaPlayerController::BeginPlay()
 	InputModeData.SetHideCursorDuringCapture(false);
 	SetInputMode(InputModeData);
 
-	DefaultSpeed = ControlledPawn->GetPawnDefaultSpeed();
+	NewDefaultSpeed = ControlledPawn->GetPawnDefaultSpeed();
 
 	HandleAutoMove();
 }
@@ -78,10 +78,23 @@ void AAtmaPlayerController::HandleMove(const FInputActionValue& InputActionValue
 	const FVector2D InputAxisVector = InputActionValue.Get<FVector2D>();
 
 	float VerticalInput = FMath::Max(InputAxisVector.Y, 0.0f);
+	float MovementSpeed;
+
+	if (InputAxisVector.X !=0)
+	{
+		MovementSpeed = FMath::Abs(InputAxisVector.X);
+	}
+
+	if (VerticalInput != 0)
+	{
+		MovementSpeed = VerticalInput;
+	}
 
 	const FVector MovementDirection = FVector(0.f, InputAxisVector.X, VerticalInput);
-
-	ControlledPawn->AddMovementInput(MovementDirection, 1.);
+	
+	float CMSpeed = ControlledPawn->GetMovementComponent()->GetMaxSpeed();
+	
+	ControlledPawn->AddMovementInput(MovementDirection, MovementSpeed);
 }
 
 void AAtmaPlayerController::HandleFire(const FInputActionValue& InputActionValue)
@@ -106,6 +119,6 @@ void AAtmaPlayerController::HandleAutoMove()
 	
 	if (ControlledPawn)
 	{
-		ControlledPawn->AddMovementInput(ForwardDirection, DefaultSpeed);
+		ControlledPawn->AddMovementInput(ForwardDirection, NewDefaultSpeed);
 	}
 }
