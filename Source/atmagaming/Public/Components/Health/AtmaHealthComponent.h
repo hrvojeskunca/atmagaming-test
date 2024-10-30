@@ -8,7 +8,7 @@
 #include "AtmaHealthComponent.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), Blueprintable, BlueprintType)
 class ATMAGAMING_API UAtmaHealthComponent : public UActorComponent, public IHealthStatus
 {
 	GENERATED_BODY()
@@ -22,16 +22,30 @@ public:
 	virtual void TakeDamage(float DamageAmount, TSubclassOf<UDamageType> DamageType) override;
 
 	UFUNCTION(BlueprintCallable, Category = Health)
-	void RegenerateHealth(float HealAmount);
+	void RegenerateHealth();
+
+	UFUNCTION(BlueprintCallable, Category = Health)
+	void SetMaxHealth(float NewHealth);
+
+	UFUNCTION(BlueprintCallable, Category = Health)
+	void SetRegenerationRate(float NewRegenerationRate);
+
+	UFUNCTION(BlueprintCallable, Category = Health)
+	void SetRegenRateInterval(float NewHealthRegenRateInterval);
+
+	UFUNCTION(BlueprintCallable, Category = Health)
+	void SetRegenRateDelay(float NewHealthRegenRateDelay);
 
 	UFUNCTION(BlueprintPure, Category = Health)
 	float GetHealth() const { return CurrentHealth; }
 
-	UFUNCTION(BlueprintCallable, Category = Health)
-	void SetHealthRegenRate(float NewHealRegenRate) { HealthRegenRate = NewHealRegenRate; }
 
 protected:
 	virtual void BeginPlay() override;
+
+	FTimerHandle HealthRegenTimerHandle;
+
+	float LastDamageTime;
 
 	UPROPERTY(EditAnywhere, Category = Health)
 	float MaxHealth;
@@ -41,5 +55,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = Health)
 	float HealthRegenRate;
-		
+
+	UPROPERTY(EditAnywhere, Category = Health)
+	float HealthRegenDelay = 3.0f;
+
+	UPROPERTY(EditAnywhere, Category = Health)
+	float HealthRegenInterval = 2.0f;
 };

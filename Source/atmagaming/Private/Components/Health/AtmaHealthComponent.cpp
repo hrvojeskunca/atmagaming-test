@@ -2,6 +2,8 @@
 
 
 #include "Components/Health/AtmaHealthComponent.h"
+#include "TimerManager.h"
+#include "GameFramework/Actor.h"
 
 
 UAtmaHealthComponent::UAtmaHealthComponent()
@@ -9,19 +11,14 @@ UAtmaHealthComponent::UAtmaHealthComponent()
 
 	PrimaryComponentTick.bCanEverTick = false;
 
-	MaxHealth = 100.f;
-	HealthRegenRate = 0.f;
-
+	CurrentHealth = MaxHealth;
 }
 
 void UAtmaHealthComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CurrentHealth = MaxHealth;
-	
 }
-
 
 void UAtmaHealthComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
@@ -37,11 +34,44 @@ void UAtmaHealthComponent::TakeDamage(float DamageAmount, TSubclassOf<UDamageTyp
 		{
 			UE_LOG(LogTemp, Warning, TEXT("You are deaded!"));
 		}
+
+		LastDamageTime = GetWorld()->GetTimeSeconds();
+
+		GetWorld()->GetTimerManager().ClearTimer(HealthRegenTimerHandle);
+
+		GetWorld()->GetTimerManager().SetTimer(HealthRegenTimerHandle, this, &UAtmaHealthComponent::RegenerateHealth, HealthRegenInterval, true, HealthRegenDelay);
 	}
 }
 
-void UAtmaHealthComponent::RegenerateHealth(float HealAmount)
+void UAtmaHealthComponent::RegenerateHealth()
 {
-	CurrentHealth = FMath::Clamp(CurrentHealth + HealAmount, 0.f, MaxHealth);
+	if (GetWorld()->GetTimeSeconds() - LastDamageTime >= HealthRegenDelay)
+	{
+		CurrentHealth = FMath::Clamp(CurrentHealth + HealthRegenRate, 0.0f, MaxHealth);
+
+		if (CurrentHealth >= MaxHealth)
+		{
+			GetWorld()->GetTimerManager().ClearTimer(HealthRegenTimerHandle);
+		}
+	}
 }
 
+void UAtmaHealthComponent::SetMaxHealth(float NewHealth)
+{
+	MaxHealth = NewHealth;
+}
+
+void UAtmaHealthComponent::SetRegenerationRate(float NewRegenerationRate)
+{
+	HealthRegenRate = NewRegenerationRate;
+}
+
+void UAtmaHealthComponent::SetRegenRateInterval(float NewHealthRegenRateInterval)
+{
+	HealthRegenInterval = NewHealthRegenRateInterval;
+}
+
+void UAtmaHealthComponent::SetRegenRateDelay(float NewHealthRegenRateDelay)
+{
+	HealthRegenDelay = NewHealthRegenRateDelay;
+}

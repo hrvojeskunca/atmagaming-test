@@ -14,6 +14,7 @@ struct ATMAGAMING_API FAtmaPlayerDataMap
         PlayerValues.Add(TEXT("MaxSpeed"), 1000.f);
         PlayerValues.Add(TEXT("Acceleration"), 250.f);
         PlayerValues.Add(TEXT("Deceleration"), 300.f);
+        PlayerValues.Add(TEXT("Health"), 100.f);
     }
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PlayerData)

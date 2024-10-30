@@ -8,7 +8,6 @@
 
 class USpringArmComponent;
 class UCameraComponent;
-class UFloatingPawnMovement;
 
 UCLASS()
 class ATMAGAMING_API APlayerPawn : public APawnBase
@@ -22,13 +21,11 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	virtual void SetPawnData(EAtmaPawnType NewPawnType) override;
+
 	UPROPERTY(EditAnywhere, Category = Components)
 	TObjectPtr<USpringArmComponent> SpringArm;
 
 	UPROPERTY(EditAnywhere, Category = Components)
 	TObjectPtr<UCameraComponent> Camera;
-
-	UPROPERTY(EditAnywhere, Category = Components)
-	TObjectPtr<UFloatingPawnMovement> FloatingPawnMovementComponent;
-	
 };
